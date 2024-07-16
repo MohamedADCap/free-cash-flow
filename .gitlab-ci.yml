@@ -1,0 +1,47 @@
+stages:
+  - build
+  - deploy
+
+before_script:
+  - echo "Setting up environment..."
+  - python -m venv venv
+  - source venv/bin/activate
+  - pip install -r requirements.txt
+
+build:
+  stage: build
+  script:
+    - echo "Building application..."
+    # Add any build steps if necessary
+
+deploy_web_app:
+  stage: deploy
+  script:
+    - echo "Deploying web app..."
+    - bash scripts/deploy_web_app.sh
+  only:
+    - master
+
+initialize_database:
+  stage: deploy
+  script:
+    - echo "Initializing database..."
+    - python db/initialize_db.py
+  only:
+    - master
+
+deploy_postgres:
+  stage: deploy
+  script:
+    - echo "Deploying PostgreSQL..."
+    - bash scripts/deploy_postgres.sh
+  only:
+    - master
+
+deploy_databricks:
+  stage: deploy
+  script:
+    - echo "Deploying Databricks notebooks..."
+    - bash scripts/deploy_databricks.sh
+  only:
+    - master
