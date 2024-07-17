@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Free Cash Flow Calculator</h1>
+    <form action="/select-action" method="post">
+        <button type="submit" name="action" value="upload">Upload Company Data</button>
+        <button type="submit" name="action" value="simulate">Simulate Free Cash Flow</button>
+    </form>
+{% endblock %}

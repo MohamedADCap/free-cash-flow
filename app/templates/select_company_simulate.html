@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Simulate Free Cash Flow</h1>
+    <form action="/simulate" method="post">
+        <label for="company_name">Select Company:</label>
+        <select name="company_name" id="company_name">
+            {% for company in companies %}
+                <option value="{{ company.company_name }}">{{ company.company_name }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="month">Select Month:</label>
+        <input type="month" name="month">
+        <input type="submit" value="Simulate">
+    </form>
+{% endblock %}

@@ -1,0 +1,24 @@
+# Python specific
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+env/
+
+# IDE specific
+.vscode/
+.idea/
+
+# Compiled Python files
+*.pyc
+
+# Logs
+*.log
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Environment variables
+.env

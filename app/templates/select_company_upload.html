@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Upload Company Data</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <label for="company_name">Select Company:</label>
+        <select name="company_name" id="company_name">
+            {% for company in companies %}
+                <option value="{{ company }}">{{ company }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <input type="file" name="file">
+        <input type="submit" value="Upload">
+    </form>
+{% endblock %}
