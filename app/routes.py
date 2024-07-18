@@ -36,7 +36,7 @@ def select_company_upload():
  
     # Iterate through the rows and print them
     for row in companies:
-     print(row)
+        print(row)
  
     # Close the cursor and connection
     cursor.close()
@@ -46,11 +46,11 @@ def select_company_upload():
         print("No companies found in the database.")
     else:
         # Transform tuples into a list of company names
-         company_names = [company[0] for company in companies]
+        company_names = [company[0] for company in companies]
 
         # Print company names for debugging
-         for company_name in company_names:
-             print(f"Found company: {company_name}  ")
+        for company_name in company_names:
+            print(f"Found company: {company_name}  ")
 
     return render_template('select_company_upload.html', companies=company_names)
          
@@ -69,11 +69,10 @@ def upload_file():
 
             # Insertion des données ligne par ligne
             for index, row in df.iterrows():
-                
                 cursor.execute("""
-                    INSERT INTO company_data (company_name, category, sub_category, amount, date)
-                    VALUES (?, ?, ?, ?, ?)
-                """, (row['company_name'], row['category'], row['sub_category'],row['amount'], row['date']))
+                    INSERT INTO parametrage_nature_mouvements (code_typ, categorie_mouvement, code_nat, nature_mouvement)
+                    VALUES (?, ?, ?, ?)
+                """, (row['code_typ'], row['categorie_mouvement'], row['code_nat'],row['nature_mouvement']))
 
             # Valider la transaction pour sauvegarder les changements
             conn.commit()

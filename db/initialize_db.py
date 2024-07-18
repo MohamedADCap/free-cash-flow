@@ -24,12 +24,23 @@ def init_sqlite():
             date TEXT NOT NULL
         )
     ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS parametrage_nature_mouvements (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            code_typ TEXT NOT NULL,
+            categorie_mouvement TEXT NOT NULL,
+            code_nat TEXT NOT NULL,
+            nature_mouvement TEXT NOT NULL
+        )
+    ''')
     
     cursor.execute('''
         INSERT INTO company_data (company_name, category, sub_category, amount, date)
         VALUES 
-        ('Company A', 'Category 1', 'Sub Category 1', '100', '2023-01-01'),
-        ('Company B', 'Category 2', 'Sub Category 2', '200', '2023-02-01')
+        ('MICHELIN', 'Recette exploitation', 'exploitation', '100', '20230101'),
+        ('ENGIE', 'Achat de marchandise', 'marchandise', '200', '20230201'),
+        ('CAPGEMINI', 'Conseils', 'Service numerique', '300', '20230201')
     ''')
     
     conn.commit()

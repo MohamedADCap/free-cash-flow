@@ -8,6 +8,13 @@ class CompanyData(db.Model):
     amount = db.Column(db.String(255), nullable=False)
     date = db.Column(db.String(255), nullable=False)
 
+class ParametrageNatureData(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code_typ = db.Column(db.String(255), nullable=False)
+    categorie_mouvement = db.Column(db.String(255), nullable=False)
+    code_nat = db.Column(db.String(255), nullable=False)
+    nature_mouvement = db.Column(db.String(255), nullable=False)
+
 class SimulationConfig(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     config_name = db.Column(db.String(255), nullable=False)
