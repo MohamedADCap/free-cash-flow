@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Saisie des Paramètres Généraux</h1>
+<form action="{{ url_for('main.saisie_parametres_generaux') }}" method="post">
+    <label for="id_entreprise">ID de l'entreprise:</label>
+    <input type="text" id="id_entreprise" name="id_entreprise" required><br><br>
+
+    <label for="nom_entreprise">Nom de l'entreprise:</label>
+    <input type="text" id="nom_entreprise" name="nom_entreprise" required><br><br>
+
+    <label for="devise">Devise:</label>
+    <input type="text" id="devise" name="devise" required><br><br>
+
+    <label for="langue">Langue:</label>
+    <input type="text" id="langue" name="langue" required><br><br>
+
+    <label for="annee_exercice">Année de l'exercice:</label>
+    <input type="text" id="annee_exercice" name="annee_exercice" required><br><br>
+
+    <label for="mois_debut_simulation">Mois de début de simulation:</label>
+    <input type="text" id="mois_debut_simulation" name="mois_debut_simulation" required><br><br>
+
+    <input type="submit" value="Sauvegarder">
+</form>
+<br>
+<div>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</div>
+{% endblock %}

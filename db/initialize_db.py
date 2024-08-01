@@ -34,7 +34,31 @@ def init_sqlite():
             nature_mouvement TEXT NOT NULL
         )
     ''')
-    
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS parametres_generaux (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_entreprise TEXT NOT NULL,
+            nom_entreprise TEXT NOT NULL,
+            devise TEXT NOT NULL,
+            langue TEXT NOT NULL,
+            annee_exercice TEXT NOT NULL,
+            mois_debut_simulation TEXT NOT NULL
+        )
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS soldes_intermediaires_gestion (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            entreprise TEXT NOT NULL,
+            date_mouvement TEXT NOT NULL,
+            categorie_mouvement TEXT NOT NULL,
+            nature_mouvement TEXT NOT NULL,
+            libelle_mouvement TEXT NOT NULL,
+            montant TEXT NOT NULL
+        )
+    ''')
+
     cursor.execute('''
         INSERT INTO company_data (company_name, category, sub_category, amount, date)
         VALUES 

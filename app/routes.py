@@ -1,9 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from app.utils import upload_file_to_blob
-from app.models import CompanyData, SimulationConfig, db
-import sqlite3
 import pandas as pd
-
+import sqlite3
 
 main = Blueprint('main', __name__)
 
@@ -14,126 +11,150 @@ def index():
 @main.route('/select-action', methods=['POST'])
 def select_action():
     action = request.form['action']
-    if action == 'upload':
-        return redirect(url_for('main.select_company_upload'))
+    if action == 'params':
+        return redirect(url_for('main.saisie_parametres_generaux'))
+    elif action == 'mouvements':
+        return redirect(url_for('main.saisie_mouvements'))
     elif action == 'simulate':
         return redirect(url_for('main.select_company_simulate'))
 
 @main.route('/select-company-upload')
 def select_company_upload():
-    
-    # Connect to the SQLite database
     connection = sqlite3.connect('app.db')
- 
-    # Create a cursor object
     cursor = connection.cursor()
- 
-    # Execute a SQL query to select all rows from a table
-    cursor.execute("SELECT DISTINCT company_data.company_name AS company_data_company_name FROM company_data")
- 
-    # Fetch all rows from the executed query
+    cursor.execute("SELECT DISTINCT company_name FROM company_data")
     companies = cursor.fetchall()
- 
-    # Iterate through the rows and print them
-    for row in companies:
-        print(row)
- 
-    # Close the cursor and connection
     cursor.close()
     connection.close()
 
     if not companies:
-        print("No companies found in the database.")
+        flash("No companies found in the database.")
     else:
-        # Transform tuples into a list of company names
         company_names = [company[0] for company in companies]
 
-        # Print company names for debugging
-        for company_name in company_names:
-            print(f"Found company: {company_name}  ")
-
     return render_template('select_company_upload.html', companies=company_names)
-         
+
 @main.route('/upload', methods=['POST'])
-def upload_file(): 
-    company_name =  request.form['company_name']
+def upload_file():
+    company_name = request.form['company_name']
     file = request.files['file']
     if file and company_name:
         try:
             df = pd.read_excel(file)
-            print(df.head())
-
-            # Connexion à la base de données SQLite
             conn = sqlite3.connect('app.db')
             cursor = conn.cursor()
 
-            # Insertion des données ligne par ligne
             for index, row in df.iterrows():
+                # Vérification de la nature et de la typologie des mouvements
                 cursor.execute("""
-                    INSERT INTO parametrage_nature_mouvements (code_typ, categorie_mouvement, code_nat, nature_mouvement)
-                    VALUES (?, ?, ?, ?)
-                """, (row['code_typ'], row['categorie_mouvement'], row['code_nat'],row['nature_mouvement']))
+                    SELECT 1 FROM parametrage_nature_mouvements
+                    WHERE code_typ = ? AND code_nat = ?
+                """, (row['code_typ'], row['code_nat']))
+                if not cursor.fetchone():
+                    flash(f"Invalid movement type or category at row {index + 1}")
+                    return redirect(url_for('main.index'))
+                
+                # Vérification de l'entreprise
+                if row['entreprise'] != company_name:
+                    flash(f"Invalid company name at row {index + 1}")
+                    return redirect(url_for('main.index'))
 
-            # Valider la transaction pour sauvegarder les changements
+                # Vérification que le montant est une valeur numérique
+                if not isinstance(row['montant'], (int, float)):
+                    flash(f"Invalid amount at row {index + 1}")
+                    return redirect(url_for('main.index'))
+
+                # Insertion des données si tous les contrôles sont validés
+                cursor.execute("""
+                    INSERT INTO soldes_intermediaires_gestion (entreprise, date_mouvement, categorie_mouvement, nature_mouvement, libelle_mouvement, montant)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """, (row['entreprise'], row['date_mouvement'], row['categorie_mouvement'], row['nature_mouvement'], row['libelle_mouvement'], row['montant']))
+
             conn.commit()
             cursor.close()
             conn.close()
             flash('File successfully uploaded and data inserted')
         except Exception as ex:
-            # En cas d'erreur, annuler la transaction
             conn.rollback()
             flash(f'File upload failed: {ex}')
     else:
         flash('Please select a company and a file')
     return redirect(url_for('main.index'))
 
-#            for index, row in df.iterrows():
-#                company_data = CompanyData(
-#                    company_name=row['company_name'],
-#                    category=row['category'],
-#                    sub_category=row['sub_category'],
-#                    amount=row['amount'],
-#                    date=row['date']
-#                )
-#                db.session.add(company_data)
-#                
-#            db.session.commit()
-#            flash('File successfully uploaded and data inserted')
-#        except Exception as ex:
-#            db.session.rollback()
-#            flash(f"File upload failed: {ex}")
-#    else:
-#        flash('Please select a company and a file')
-#    return redirect(url_for('main.index'))
+@main.route('/saisie-parametres-generaux', methods=['GET', 'POST'])
+def saisie_parametres_generaux():
+    if request.method == 'POST':
+        id_entreprise = request.form['id_entreprise']
+        nom_entreprise = request.form['nom_entreprise']
+        devise = request.form['devise']
+        langue = request.form['langue']
+        annee_exercice = request.form['annee_exercice']
+        mois_debut_simulation = request.form['mois_debut_simulation']
+
+        try:
+            conn = sqlite3.connect('app.db')
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO parametres_generaux (id_entreprise, nom_entreprise, devise, langue, annee_exercice, mois_debut_simulation)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (id_entreprise, nom_entreprise, devise, langue, annee_exercice, mois_debut_simulation))
+            conn.commit()
+            cursor.close()
+            conn.close()
+            flash('Parameters successfully saved')
+        except Exception as ex:
+            conn.rollback()
+            flash(f'Failed to save parameters: {ex}')
+        return redirect(url_for('main.index'))
+    
+    return render_template('saisie_parametres_generaux.html')
+
+@main.route('/saisie-mouvements', methods=['GET', 'POST'])
+def saisie_mouvements():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file:
+            try:
+                df = pd.read_excel(file)
+                conn = sqlite3.connect('app.db')
+                cursor = conn.cursor()
+
+                for index, row in df.iterrows():
+                    print(f"Processing row {index + 1}:")
+                    print(f" - categorie_mouvement: {row['categorie_mouvement']}")
+                    print(f" - nature_mouvement: {row['nature_mouvement']}")
+                    # Vérification de la nature et de la typologie des mouvements
+                    cursor.execute("""
+                        SELECT 1 FROM parametrage_nature_mouvements
+                        WHERE code_typ = ? AND code_nat = ?
+                    """, (row['categorie_mouvement'], row['nature_mouvement']))
+                    if not cursor.fetchone():
+                        flash(f"Invalid movement category or nature at row {index + 1}")
+                        return redirect(url_for('main.index'))
 
 
-#@main.route('/upload', methods=['POST'])
-#def upload_file():
- #   company_name = request.form['company_name']
-  #  file = request.files['file']
-   # if file and company_name:
-  #      try:
-  #          filename = f"{company_name}/{file.filename}"
-  #          upload_file_to_blob(file, filename)
-#            flash('File successfully uploaded')
-#        except Exception as ex:
-#            flash(f"File upload failed: {ex}")
-#    else:
-#        flash('Please select a company and a file')
-#    return redirect(url_for('main.index'))
+                    cursor.execute("""
+                        INSERT INTO soldes_intermediaires_gestion (entreprise, date_mouvement, categorie_mouvement, nature_mouvement, libelle_mouvement, montant)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    """, (row['entreprise'], row['date_mouvement'], row['categorie_mouvement'], row['nature_mouvement'], row['libelle_mouvement'], row['montant']))
 
-@main.route('/select-company-simulate')
-def select_company_simulate():
-    # Retrieve all companies for selection
-    companies = db.session.query(CompanyData.company_name).distinct().all()
-    return render_template('select_company_simulate.html', companies=companies)
+                conn.commit()
+                cursor.close()
+                conn.close()
+                flash('File successfully uploaded and data inserted', "success")
+            except Exception as ex:
+                flash(f'File upload failed: {ex}', "error")
+        else:
+            flash('Please upload a file', "error")
+        return redirect(url_for('main.index'))
+
+    return render_template('saisie_mouvements.html')
 
 @main.route('/simulate', methods=['POST'])
 def simulate():
     company_name = request.form['company_name']
     month = request.form['month']
     if company_name and month:
-        # Here, you would trigger the Databricks notebook for the simulation
         flash(f'Simulation for {company_name} for month {month} triggered')
     else:
         flash('Please select a company and a month')
