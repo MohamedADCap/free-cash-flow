@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Chargement des Paramètres Nature Mouvement</h1>
+<form action="{{ url_for('main.parametre_nature_mvm_upload') }}" method="post" enctype="multipart/form-data">
+    <label for="file">Upload Excel File:</label>
+    <input type="file" id="file" name="file" accept=".xlsx" required><br><br>
+    <input type="submit" value="Upload">
+</form>
+<br>
+<div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</div>
+{% endblock %}
