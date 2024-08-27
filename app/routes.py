@@ -16,7 +16,7 @@ def select_action():
     elif action == 'mouvements':
         return redirect(url_for('main.saisie_mouvements'))
     elif action == 'simulate':
-        return redirect(url_for('main.select_company_simulate'))
+        return redirect(url_for('main.saisie_options_simulation'))
 
 @main.route('/select-company-upload')
 def select_company_upload():
@@ -150,12 +150,108 @@ def saisie_mouvements():
 
     return render_template('saisie_mouvements.html')
 
-@main.route('/simulate', methods=['POST'])
-def simulate():
-    company_name = request.form['company_name']
-    month = request.form['month']
-    if company_name and month:
-        flash(f'Simulation for {company_name} for month {month} triggered')
-    else:
-        flash('Please select a company and a month')
-    return redirect(url_for('main.index'))
+
+# Exemple de liste des composants pour le formulaire
+COMPOSANTS = [
+    "Recettes d’exploitation",
+    "Recettes de Gestion",
+    "Achat Matières",
+    "Autres Achats & Charges Externes",
+    "Impôts et Taxes",
+    "Charges & Salaires",
+    "Autre Charges"
+]
+import logging
+# Configuration de base des logs
+logging.basicConfig(level=logging.INFO)
+
+@main.route('/saisie-options-simulation', methods=['GET', 'POST'])
+def saisie_options_simulation():
+    if request.method == 'POST':
+        try:
+            # Log des en-têtes et données de la requête
+            logging.info(f"En-têtes de la requête : {request.headers}")
+            logging.info(f"Données brutes de la requête : {request.data}")
+            logging.info(f"Données du formulaire : {request.form}")
+            logging.basicConfig(level=logging.DEBUG)
+
+            entreprise = request.form['entreprise']
+            version = request.form['version']
+            mois_simulation_FRF = request.form['mois_simulation_FRF']
+            date_jour = request.form['date_jour']  # Ajout de la récupération de la date_jour
+
+            print(entreprise)
+            print(version)
+            # Log des valeurs principales
+            logging.info(f"Entreprise: {entreprise}")
+            logging.info(f"Version: {version}")
+            logging.info(f"Mois de simulation: {mois_simulation_FRF}")
+            logging.info(f"Date du jour: {date_jour}")  # Log de la date_jour
+            logging.basicConfig(level=logging.DEBUG)
+
+            # Préparer les valeurs pour chaque composant
+            valeurs = {
+                "formule_recettes_exploitation": request.form.get('formule_recettes_exploitation', ""),
+                "formule_recettes_gestion": request.form.get('formule_recettes_gestion', ""),
+                "formule_achat_matieres": request.form.get('formule_achat_matieres', ""),
+                "formule_autres_achats_charges_externes": request.form.get('formule_autres_achats_charges_externes', ""),
+                "formule_impots_taxes": request.form.get('formule_impots_taxes', ""),
+                "formule_charges_salaires": request.form.get('formule_charges_salaires', ""),
+                "formule_autre_charges": request.form.get('formule_autre_charges', ""),
+                "courbe_recettes_exploitation": request.form.get('courbe_recettes_exploitation', ""),
+                "courbe_recettes_gestion": request.form.get('courbe_recettes_gestion', ""),
+                "courbe_achat_matieres": request.form.get('courbe_achat_matieres', ""),
+                "courbe_autres_achats_charges_externes": request.form.get('courbe_autres_achats_charges_externes', ""),
+                "courbe_impots_taxes": request.form.get('courbe_impots_taxes', ""),
+                "courbe_charges_salaires": request.form.get('courbe_charges_salaires', ""),
+                "courbe_autre_charges": request.form.get('courbe_autre_charges', "")
+            }
+
+            # Log des valeurs reçues pour vérification
+            logging.info(f"Valeurs reçues : {valeurs}")
+            print(valeurs)
+            # Connexion à la base de données SQLite
+            conn = sqlite3.connect('app.db')
+            cursor = conn.cursor()
+
+            # Insertion dans la table parametres_simulation
+            cursor.execute('''
+                INSERT INTO parametres_simulation (
+                    entreprise, version, mois_simulation_FRF, date_jour,
+                    formule_recettes_exploitation, formule_recettes_gestion, 
+                    formule_achat_matieres, formule_autres_achats_charges_externes, 
+                    formule_impots_taxes, formule_charges_salaires, 
+                    formule_autre_charges, courbe_recettes_exploitation, 
+                    courbe_recettes_gestion, courbe_achat_matieres, 
+                    courbe_autres_achats_charges_externes, courbe_impots_taxes, 
+                    courbe_charges_salaires, courbe_autre_charges
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (
+                entreprise, version, mois_simulation_FRF, date_jour,  # Ajout de date_jour
+                valeurs["formule_recettes_exploitation"], valeurs["formule_recettes_gestion"],
+                valeurs["formule_achat_matieres"], valeurs["formule_autres_achats_charges_externes"],
+                valeurs["formule_impots_taxes"], valeurs["formule_charges_salaires"],
+                valeurs["formule_autre_charges"], valeurs["courbe_recettes_exploitation"],
+                valeurs["courbe_recettes_gestion"], valeurs["courbe_achat_matieres"],
+                valeurs["courbe_autres_achats_charges_externes"], valeurs["courbe_impots_taxes"],
+                valeurs["courbe_charges_salaires"], valeurs["courbe_autre_charges"]
+            ))
+
+            # Sauvegarder les modifications et fermer la connexion
+            conn.commit()
+            conn.close()
+
+            flash("Les options de simulation ont été enregistrées avec succès.", "success")
+            return redirect(url_for('main.index'))
+
+        except Exception as e:
+            logging.error(f"Erreur lors du traitement de la requête: {str(e)}")
+            flash(f"Une erreur est survenue lors de l'enregistrement des options de simulation: {str(e)}", "danger")
+
+        return redirect(url_for('main.index'))
+
+    return render_template('saisie_options_simulation.html', composants=COMPOSANTS)
+
+
+if __name__ == '__main__':
+    main.run(debug=True)

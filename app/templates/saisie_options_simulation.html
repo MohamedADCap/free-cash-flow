@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Saisie des Paramètres de Simulation</h1>
+<form method="post">
+    <label for="entreprise">ID de l'entreprise:</label>
+    <input type="text" id="entreprise" name="entreprise" required><br><br>
+
+    <label for="version">Version:</label>
+    <input type="text" id="version" name="version" required><br><br>
+
+    <label for="date_jour">Date du Jour:</label>
+    <input type="date" id="date_jour" name="date_jour" required><br><br>
+
+    <label for="mois_simulation_FRF">Mois de simulation FRF:</label>
+    <input type="text" id="mois_simulation_FRF" name="mois_simulation_FRF" required><br><br>
+
+    <h3>Choisissez les formules et courbes pour chaque composant</h3>
+
+    <table border="1">
+        <tr>
+            <th>Composant</th>
+            <th>Formule 1</th>
+            <th>Formule 2</th>
+            <th>Simulation par courbe</th>
+        </tr>
+        <tr>
+            <td>Recettes d’Exploitation (CA)</td>
+            <td>
+                <input type="radio" name="formule_recettes_exploitation" value="Formule 1" required>
+            </td>
+            <td>
+                <input type="radio" name="formule_recettes_exploitation" value="Formule 2">
+            </td>
+            <td>
+                <input type="checkbox" name="courbe_recettes_exploitation" value="Courbe">
+            </td>
+        </tr>
+        <tr>
+            <td>Recettes de Gestion</td>
+            <td>
+                <input type="radio" name="formule_recettes_gestion" value="Formule 1" required>
+            </td>
+            <td>
+                <input type="radio" name="formule_recettes_gestion" value="Formule 2">
+            </td>
+            <td>
+                <input type="checkbox" name="courbe_recettes_gestion" value="Courbe">
+            </td>
+        </tr>
+        <tr>
+            <td>Achat Matières</td>
+            <td>
+                <input type="radio" name="formule_achat_matieres" value="Formule 1" required>
+            </td>
+            <td>
+                <input type="radio" name="formule_achat_matieres" value="Formule 2">
+            </td>
+            <td>
+                <input type="checkbox" name="courbe_achat_matieres" value="Courbe">
+            </td>
+        </tr>
+        <tr>
+            <td>Autres Achats & Charges Externes</td>
+            <td>
+                <input type="radio" name="formule_autres_achats_charges_externes" value="Formule 1" required>
+            </td>
+            <td>
+                <input type="radio" name="formule_autres_achats_charges_externes" value="Formule 2">
+            </td>
+            <td>
+                <input type="checkbox" name="courbe_autres_achats_charges_externes" value="Courbe">
+            </td>
+        </tr>
+        <tr>
+            <td>Impôts et Taxes</td>
+            <td>
+                <input type="radio" name="formule_impots_taxes" value="Formule 1" required>
+            </td>
+            <td>
+                <input type="radio" name="formule_impots_taxes" value="Formule 2">
+            </td>
+            <td>
+                <input type="checkbox" name="courbe_impots_taxes" value="Courbe">
+            </td>
+        </tr>
+        <tr>
+            <td>Charges & Salaires</td>
+            <td>
+                <input type="radio" name="formule_charges_salaires" value="Formule 1" required>
+            </td>
+            <td>
+                <input type="radio" name="formule_charges_salaires" value="Formule 2">
+            </td>
+            <td>
+                <input type="checkbox" name="courbe_charges_salaires" value="Courbe">
+            </td>
+        </tr>
+        <tr>
+            <td>Autre Charges</td>
+            <td>
+                <input type="radio" name="formule_autre_charges" value="Formule 1" required>
+            </td>
+            <td>
+                <input type="radio" name="formule_autre_charges" value="Formule 2">
+            </td>
+            <td>
+                <input type="checkbox" name="courbe_autre_charges" value="Courbe">
+            </td>
+        </tr>
+    </table>
+
+    <br>
+    <button type="submit">Enregistrer</button>
+</form>
+
+<div>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</div>
+{% endblock %}

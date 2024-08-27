@@ -13,17 +13,6 @@ def init_sqlite():
     """
     conn = sqlite3.connect('app.db')
     cursor = conn.cursor()
-     
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS company_data (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            company_name TEXT NOT NULL,
-            category TEXT NOT NULL,
-            sub_category TEXT NOT NULL,
-            amount TEXT NOT NULL,
-            date TEXT NOT NULL
-        )
-    ''')
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS parametrage_nature_mouvements (
@@ -59,17 +48,36 @@ def init_sqlite():
         )
     ''')
 
+
     cursor.execute('''
-        INSERT INTO company_data (company_name, category, sub_category, amount, date)
-        VALUES 
-        ('MICHELIN', 'Recette exploitation', 'exploitation', '100', '20230101'),
-        ('ENGIE', 'Achat de marchandise', 'marchandise', '200', '20230201'),
-        ('CAPGEMINI', 'Conseils', 'Service numerique', '300', '20230201')
+        CREATE TABLE parametres_simulation (
+        entreprise TEXT NOT NULL,
+        version TEXT NOT NULL,
+        mois_simulation_FRF TEXT NOT NULL,
+        date_jour TEXT,
+        formule_recettes_exploitation TEXT,
+        formule_recettes_gestion TEXT,
+        formule_achat_matieres TEXT,
+        formule_autres_achats_charges_externes TEXT,
+        formule_impots_taxes TEXT,
+        formule_charges_salaires TEXT,
+        formule_autre_charges TEXT,
+        courbe_recettes_exploitation TEXT,
+        courbe_recettes_gestion TEXT,
+        courbe_achat_matieres TEXT,
+        courbe_autres_achats_charges_externes TEXT,
+        courbe_impots_taxes TEXT,
+        courbe_charges_salaires TEXT,
+        courbe_autre_charges TEXT,
+        PRIMARY KEY (entreprise, version, mois_simulation_FRF)
+        )
     ''')
-    
+
     conn.commit()
     conn.close()
-    print("SQLite database initialized with sample data.")
+
+
+    print("SQLite database initialized.")
 
 def init_postgres():
     """
