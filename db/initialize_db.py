@@ -73,6 +73,24 @@ def init_sqlite():
         )
     ''')
 
+    cursor.execute('''
+        CREATE TABLE courbes (
+        entreprise TEXT NOT NULL,
+        version TEXT NOT NULL,
+        mois_simulation_FRF TEXT NOT NULL,
+        date_jour TEXT,
+        mois_prevision TEXT NOT NULL,
+        taux_recettes_exploitation TEXT,
+        taux_recettes_gestion TEXT,
+        taux_achat_matieres TEXT,
+        taux_autres_achats_charges_externes TEXT,
+        taux_impots_taxes TEXT,
+        taux_charges_salaires TEXT,
+        taux_autre_charges TEXT,
+        PRIMARY KEY (entreprise, version, mois_simulation_FRF, mois_prevision)
+        )
+    ''')
+
     conn.commit()
     conn.close()
 

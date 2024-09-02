@@ -19,7 +19,8 @@ def select_action():
         return redirect(url_for('main.saisie_mouvements'))
     elif action == 'simulate':
         return redirect(url_for('main.saisie_options_simulation'))
-
+    elif action == 'courbes':
+        return redirect(url_for('main.courbes'))
 
 
 def allowed_file(filename):
@@ -137,7 +138,6 @@ def saisie_mouvements():
 
     return render_template('saisie_mouvements.html')
 
-
 # Exemple de liste des composants pour le formulaire
 COMPOSANTS = [
     "Recettes d’exploitation",
@@ -239,6 +239,84 @@ def saisie_options_simulation():
 
     return render_template('saisie_options_simulation.html', composants=COMPOSANTS)
 
+@main.route('/courbes', methods=['GET', 'POST'])
+def courbes():
+    if request.method == 'POST':
+        try:
+            # Log des en-têtes et données de la requête
+            logging.info(f"En-têtes de la requête : {request.headers}")
+            logging.info(f"Données brutes de la requête : {request.data}")
+            logging.info(f"Données du formulaire : {request.form}")
+            logging.basicConfig(level=logging.DEBUG)
+
+            id_entreprise = request.form['ientreprise']
+            version = request.form['version']
+            mois_simulation_FRF = request.form['mois_simulation_FRF']
+            date_jour = request.form['date_jour']
+
+            print(entreprise)
+            print(version)
+            # Log des valeurs principales
+            logging.info(f"Entreprise: {entreprise}")
+            logging.info(f"Version: {version}")
+            logging.info(f"Mois de simulation: {mois_simulation_FRF}")
+            logging.info(f"Date du jour: {date_jour}")
+            logging.basicConfig(level=logging.DEBUG)
+
+            # Préparer les valeurs pour chaque composant
+            valeurs = {
+                "month_01": request.form.get('month_01', ""),
+                "rate_01": request.form.get('rate_01', ""),
+                "month_02": request.form.get('month_02', ""),
+                "rate_02": request.form.get('rate_02', ""),
+            }
+
+            # Log des valeurs reçues pour vérification
+            logging.info(f"Valeurs reçues : {valeurs}")
+            print(valeurs)
+            # Connexion à la base de données SQLite
+            conn = sqlite3.connect('app.db')
+            cursor = conn.cursor()
+
+            # Insertion dans la table parametres_simulation
+            cursor.execute('''
+                INSERT INTO courbes (
+                    entreprise, version, mois_simulation_FRF, date_jour, 
+                    Mois_prevision, taux_recettes_exploitation
+                ) VALUES (?, ?, ?, ?, ?, ?)
+            ''', (
+                entreprise, version, mois_simulation_FRF, date_jour,
+                valeurs["month_01"], valeurs["rate_01"]
+            ))
+
+            # Sauvegarder les modifications et fermer la connexion
+            conn.commit()
+            conn.close()
+
+            flash("Les options de simulation ont été enregistrées avec succès.", "success")
+            return redirect(url_for('main.index'))
+
+        except Exception as e:
+            logging.error(f"Erreur lors du traitement de la requête: {str(e)}")
+            flash(f"Une erreur est survenue lors de l'enregistrement des options de simulation: {str(e)}", "danger")
+
+        return redirect(url_for('main.index'))
+    else:
+        conn = sqlite3.connect('app.db')
+        cur = conn.cursor()
+        res = cur.execute("SELECT entreprise, version, mois_simulation_FRF, date_jour FROM parametres_simulation")
+        #todo : vérifier si la requête renvoie au moins 1 enreg.
+        data = res.fetchone()
+        print(f"data={data}")
+        entreprise = data[0]
+        version = data[1]
+        mois_simulation_FRF = data[2]
+        date_jour = data[3]
+        print(f"entreprise          = {entreprise}")
+        print(f"version             = {version}")
+        print(f"mois_simulation_FRF = {mois_simulation_FRF}")
+        print(f"date_jour           = {date_jour}")
+        return render_template('courbes.html', entreprise=entreprise, version=version, mois_simulation_FRF=mois_simulation_FRF, date_jour=date_jour)
 
 if __name__ == '__main__':
     main.run(debug=True)

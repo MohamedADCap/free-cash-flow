@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Saisie des courbes d'évolution</h1>
+<form method="post">
+    <label for="entreprise">Entreprise :</label>
+    <input type="text" id="entreprise" name="entreprise" value="{{entreprise}}" required placeholder="entreprise"><br><br>
+
+    <label for="version">Version :</label>
+    <input type="text" id="version" name="version" value="{{version}}" required><br><br>
+
+    <label for="date_jour">Date du Jour :</label>
+    <input type="date" id="date_jour" name="date_jour" value="{{date_jour}}" required><br><br>
+
+    <label for="mois_simulation_FRF">Mois de simulation :</label>
+    <input type="text" id="mois_simulation_FRF" name="mois_simulation_FRF" value="{{mois_simulation_FRF}}" required><br><br>
+
+    <label for="critere">Critère (composant) :</label>
+    <input type="text" id="critere" name="critere" required><br><br>
+
+    <h3>Taux d'évolution mensuel.</h3>
+
+    <table border="1">
+        <tr>
+            <th>Mois</th>
+            <th>Taux</th>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" name="month_01" value="" required>
+            </td>
+            <td>
+                <input type="text" name="rate_01" value="" required>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" name="month_02" value="" required>
+            </td>
+            <td>
+                <input type="text" name="rate_02" value="" required>
+            </td>
+        </tr>
+    </table>
+
+    <br>
+    <button type="submit">Enregistrer</button>
+</form>
+<script type="text/javascript">
+    var query = window.location.search.substring(1);
+    var Field=query.split("=");
+    document.getElementById("Name").value = Field[2];
+</script>
+<div>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</div>
+{% endblock %}
