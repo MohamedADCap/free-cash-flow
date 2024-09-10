@@ -1,12 +1,26 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, Flask
 import pandas as pd
 import sqlite3
 
 main = Blueprint('main', __name__)
 
+#app = Flask(__name__)
+
 @main.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('accueil.html')
+
+# @main.route('/saisie_parametres_generaux')
+# def page1():
+#     return render_template('main.index.html')
+
+# @app.route('/page2')
+# def page2():
+#     return render_template('page2.html')
+
+# @app.route('/page3')
+# def page3():
+#     return render_template('page3.html')
 
 @main.route('/select-action', methods=['POST'])
 def select_action():
