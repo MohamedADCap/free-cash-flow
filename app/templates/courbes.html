@@ -4,7 +4,7 @@
 <h1>Saisie des courbes d'évolution</h1>
 <form method="post">
     <label for="entreprise">Entreprise :</label>
-    <input type="text" id="entreprise" name="entreprise" value="{{entreprise}}" required placeholder="entreprise"><br><br>
+    <input type="text" id="entreprise" name="entreprise" value="{{entreprise}}" required><br><br>
 
     <label for="version">Version :</label>
     <input type="text" id="version" name="version" value="{{version}}" required><br><br>
@@ -16,33 +16,26 @@
     <input type="text" id="mois_simulation_FRF" name="mois_simulation_FRF" value="{{mois_simulation_FRF}}" required><br><br>
 
     <label for="critere">Critère (composant) :</label>
-    <input type="text" id="critere" name="critere" required><br><br>
+    <input type="text" id="critere" name="critere" value="{{critere}}" required><br><br>
 
     <h3>Taux d'évolution mensuel.</h3>
-
+    <br>
     <table border="1">
         <tr>
             <th>Mois</th>
             <th>Taux</th>
         </tr>
-        <tr>
-            <td>
-                <input type="text" name="month_01" value="" required>
-            </td>
-            <td>
-                <input type="text" name="rate_01" value="" required>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <input type="text" name="month_02" value="" required>
-            </td>
-            <td>
-                <input type="text" name="rate_02" value="" required>
-            </td>
-        </tr>
+        {%for index, mois, rate in liste_mois%}
+            <tr>
+                <td>
+                    <input type="text" name="month_{{index}}" value="{{mois}}" required>
+                </td>
+                <td>
+                    <input type="text" name="rate_{{index}}" value="{{rate}}" required>
+                </td>                
+            </tr>           
+        {% endfor %}
     </table>
-
     <br>
     <button type="submit">Enregistrer</button>
 </form>

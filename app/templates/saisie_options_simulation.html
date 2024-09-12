@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 <h1>Saisie des Paramètres de Simulation</h1>
 <form method="post">
     <label for="entreprise">ID de l'entreprise:</label>
@@ -34,6 +35,7 @@
             </td>
             <td>
                 <input type="checkbox" name="courbe_recettes_exploitation" value="Courbe">
+                <button type="submit" name="critere" value="Recettes d’Exploitation (CA)">Saisie des courbes</button>
             </td>
         </tr>
         <tr>
@@ -46,6 +48,7 @@
             </td>
             <td>
                 <input type="checkbox" name="courbe_recettes_gestion" value="Courbe">
+                <button type="submit" name="critere" value="Recettes de Gestion">Saisie des courbes</button>
             </td>
         </tr>
         <tr>
@@ -58,6 +61,7 @@
             </td>
             <td>
                 <input type="checkbox" name="courbe_achat_matieres" value="Courbe">
+                <button type="submit" name="critere" value="xxx">Saisie des courbes</button>
             </td>
         </tr>
         <tr>
@@ -70,6 +74,7 @@
             </td>
             <td>
                 <input type="checkbox" name="courbe_autres_achats_charges_externes" value="Courbe">
+                <button type="submit" name="critere" value="Autres Achats & Charges Externes">Saisie des courbes</button>
             </td>
         </tr>
         <tr>
@@ -82,6 +87,7 @@
             </td>
             <td>
                 <input type="checkbox" name="courbe_impots_taxes" value="Courbe">
+                <button type="submit" name="critere" value="Impôts et Taxes">Saisie des courbes</button>
             </td>
         </tr>
         <tr>
@@ -94,6 +100,7 @@
             </td>
             <td>
                 <input type="checkbox" name="courbe_charges_salaires" value="Courbe">
+                <button type="submit" name="critere" value="Charges & Salaires">Saisie des courbes</button>
             </td>
         </tr>
         <tr>
@@ -106,6 +113,7 @@
             </td>
             <td>
                 <input type="checkbox" name="courbe_autre_charges" value="Courbe">
+                <button type="submit" name="critere" value="Autre Charges">Saisie des courbes</button>
             </td>
         </tr>
     </table>

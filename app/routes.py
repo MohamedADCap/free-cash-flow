@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
+from datetime import date, datetime, timedelta
+from dateutil.relativedelta import relativedelta
 import pandas as pd
 import sqlite3
 
@@ -11,6 +13,7 @@ def index():
 @main.route('/select-action', methods=['POST'])
 def select_action():
     action = request.form['action']
+    print(f"action={action}")
     if action == 'params':
         return redirect(url_for('main.saisie_parametres_generaux'))
     if action == 'upload_nature_mvm':
@@ -18,7 +21,9 @@ def select_action():
     elif action == 'mouvements':
         return redirect(url_for('main.saisie_mouvements'))
     elif action == 'simulate':
-        return redirect(url_for('main.saisie_options_simulation'))
+        #return redirect(url_for('main.saisie_options_simulation'))
+        print(url_for('main.saisie_options_simulation_redirect'))
+        return redirect(url_for('main.saisie_options_simulation_redirect'))
     elif action == 'courbes':
         return redirect(url_for('main.courbes'))
 
@@ -153,6 +158,18 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 @main.route('/saisie-options-simulation', methods=['GET', 'POST'])
+def saisie_options_simulation_redirect():
+    print("pass in saisie_options_simulation_redirect")
+    critere = request.form.get('critere')
+    print(f"critere={critere}")
+    if critere:
+        print("choix 1")
+        request.method = 'GET'
+        return courbes()
+    else:
+        print("choix 2")
+        return saisie_options_simulation()
+
 def saisie_options_simulation():
     if request.method == 'POST':
         try:
@@ -169,6 +186,7 @@ def saisie_options_simulation():
 
             print(entreprise)
             print(version)
+
             # Log des valeurs principales
             logging.info(f"Entreprise: {entreprise}")
             logging.info(f"Version: {version}")
@@ -230,11 +248,11 @@ def saisie_options_simulation():
 
             flash("Les options de simulation ont été enregistrées avec succès.", "success")
             return redirect(url_for('main.index'))
-
+                      
         except Exception as e:
             logging.error(f"Erreur lors du traitement de la requête: {str(e)}")
             flash(f"Une erreur est survenue lors de l'enregistrement des options de simulation: {str(e)}", "danger")
-
+    
         return redirect(url_for('main.index'))
 
     return render_template('saisie_options_simulation.html', composants=COMPOSANTS)
@@ -249,7 +267,7 @@ def courbes():
             logging.info(f"Données du formulaire : {request.form}")
             logging.basicConfig(level=logging.DEBUG)
 
-            id_entreprise = request.form['ientreprise']
+            entreprise = request.form['entreprise']
             version = request.form['version']
             mois_simulation_FRF = request.form['mois_simulation_FRF']
             date_jour = request.form['date_jour']
@@ -274,20 +292,33 @@ def courbes():
             # Log des valeurs reçues pour vérification
             logging.info(f"Valeurs reçues : {valeurs}")
             print(valeurs)
+
             # Connexion à la base de données SQLite
             conn = sqlite3.connect('app.db')
             cursor = conn.cursor()
 
-            # Insertion dans la table parametres_simulation
-            cursor.execute('''
-                INSERT INTO courbes (
-                    entreprise, version, mois_simulation_FRF, date_jour, 
-                    Mois_prevision, taux_recettes_exploitation
-                ) VALUES (?, ?, ?, ?, ?, ?)
-            ''', (
-                entreprise, version, mois_simulation_FRF, date_jour,
-                valeurs["month_01"], valeurs["rate_01"]
-            ))
+            cursor.execute('DELETE FROM courbes')
+
+            i = 1
+            cur_month = f"month_{i:0>2}"
+            month_value = request.form.get(cur_month, "")
+            while month_value:
+                rate_value = request.form.get(f"rate_{i:0>2}", "")
+                print(f"month_value = {month_value}, rate_value = {rate_value}")
+                cursor.execute('''
+                    INSERT INTO courbes (
+                        entreprise, version, mois_simulation_FRF, date_jour, 
+                        Mois_prevision, taux_recettes_exploitation
+                    ) VALUES (?, ?, ?, ?, ?, ?)
+                    '''
+                    , (
+                        entreprise, version, mois_simulation_FRF, date_jour,
+                        month_value, rate_value
+                    )
+                )                
+                i= i + 1
+                cur_month = f"month_{i:0>2}"
+                month_value = request.form.get(cur_month, "")
 
             # Sauvegarder les modifications et fermer la connexion
             conn.commit()
@@ -302,21 +333,66 @@ def courbes():
 
         return redirect(url_for('main.index'))
     else:
-        conn = sqlite3.connect('app.db')
-        cur = conn.cursor()
-        res = cur.execute("SELECT entreprise, version, mois_simulation_FRF, date_jour FROM parametres_simulation")
-        #todo : vérifier si la requête renvoie au moins 1 enreg.
-        data = res.fetchone()
-        print(f"data={data}")
-        entreprise = data[0]
-        version = data[1]
-        mois_simulation_FRF = data[2]
-        date_jour = data[3]
+        # Lecture données en base.
+        #conn = sqlite3.connect('app.db')
+        #cur = conn.cursor()
+        #res = cur.execute("SELECT entreprise, version, mois_simulation_FRF, date_jour FROM parametres_simulation")
+        ##todo : vérifier si la requête renvoie au moins 1 enreg.
+        #data = res.fetchone()
+        #print(f"data={data}")
+        #entreprise = data[0]
+        #version = data[1]
+        #mois_simulation_FRF = data[2]
+        #date_jour = data[3]
+
+        # Récupération paramètres de saisie_options_simulation.
+
+        entreprise = request.form['entreprise']
+        version = request.form['version']
+        mois_simulation_FRF = request.form['mois_simulation_FRF']
+        date_jour = request.form['date_jour']
+        #critere = request.form.get('critere')
+        critere = request.form['critere']
+
         print(f"entreprise          = {entreprise}")
         print(f"version             = {version}")
         print(f"mois_simulation_FRF = {mois_simulation_FRF}")
         print(f"date_jour           = {date_jour}")
-        return render_template('courbes.html', entreprise=entreprise, version=version, mois_simulation_FRF=mois_simulation_FRF, date_jour=date_jour)
+        print(f"critere             = {critere}")
+
+        #if button_courbes == 'courbes1':
+        #    critere = 'Recettes d’Exploitation (CA)'
+        #else:
+        #    critere = '?'
+
+        date_jour_dt = datetime.strptime(date_jour, "%Y-%m-%d")
+        print(f"date_jour_dt        = {date_jour_dt}")
+
+        # Générer une liste de mois MM/YY entre date_jour_dt et date_fin_mois_simulation_FRF_dt
+
+        date_fin_mois_simulation_FRF_dt = datetime.strptime("01/" + mois_simulation_FRF, "%d/%m/%Y") # 12/2024 => 01/12/2024
+        date_fin_mois_simulation_FRF_dt = date_fin_mois_simulation_FRF_dt + relativedelta(months=1, days=-1)  # 01/12/2024 => 31/12/2024
+        print(f"date_fin_mois_simulation_FRF_dt = {date_fin_mois_simulation_FRF_dt}")
+
+        liste_mois = []
+        cur_month = date_jour_dt
+        i = 1
+        while cur_month <= date_fin_mois_simulation_FRF_dt:
+            cur_month_str = cur_month.strftime("%m/%Y")
+            liste_mois.append([f"{i:0>2}", cur_month_str, f"{i:0>2}"])
+            print(cur_month_str)
+            cur_month = cur_month + relativedelta(months=1)
+            i = i+1
+            if i > 10:
+                break
+
+        print(f"liste_mois = {liste_mois}")
+
+        return render_template('courbes.html'\
+            , entreprise = entreprise, version = version\
+            , mois_simulation_FRF = mois_simulation_FRF\
+            , date_jour = date_jour, critere = critere\
+            , liste_mois = liste_mois)
 
 if __name__ == '__main__':
     main.run(debug=True)
