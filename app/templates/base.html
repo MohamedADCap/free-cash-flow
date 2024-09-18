@@ -3,6 +3,9 @@
 <head>
     <title>Free Cash Flow Calculator</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <style>
         .flash-success {
             color: green;
@@ -27,5 +30,22 @@
         {% endwith %}
         {% block content %}{% endblock %}
     </div>
+    <script>
+        $(function autocomplete() {
+    
+            $(".autocomplete").autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "/autocomplete",
+                        data: { p: this.element.attr("id"), q: request.term },
+                        success: function(data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 0
+            });
+        });
+    </script>
 </body>
 </html>

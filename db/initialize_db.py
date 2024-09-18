@@ -91,6 +91,38 @@ def init_sqlite():
         )
     ''')
 
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS devises (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        shortcut TEXT NOT NULL,
+        name TEXT NOT NULL
+        )
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS langues (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        shortcut TEXT NOT NULL,
+        name TEXT NOT NULL
+        )
+    ''')
+
+    cursor.execute('''
+        INSERT INTO devises (shortcut, name) VALUES
+        ('EUR', 'Euro'),
+        ('USD', 'Dollar Américain'),
+        ('GBP', 'Livre Sterling'),
+        ('CAD', 'Dollar Canadien'),
+        ('CHF', 'Franc Suisse')
+    ''')
+
+    cursor.execute('''                   
+        INSERT INTO langues (shortcut, name) VALUES
+        ('FR', 'Français'),
+        ('EN', 'Anglais'),
+        ('ES', 'Espagnol')
+    ''')
+
     conn.commit()
     conn.close()
 

@@ -1,38 +1,110 @@
 {% extends "base.html" %}
-
+ 
 {% block content %}
 <h1>Saisie des Paramètres Généraux</h1>
+<div class="form-container">
 <form action="{{ url_for('main.saisie_parametres_generaux') }}" method="post">
-    <label for="id_entreprise">ID de l'entreprise:</label>
-    <input type="text" id="id_entreprise" name="id_entreprise" required><br><br>
-
-    <label for="nom_entreprise">Nom de l'entreprise:</label>
-    <input type="text" id="nom_entreprise" name="nom_entreprise" required><br><br>
-
-    <label for="devise">Devise:</label>
-    <input type="text" id="devise" name="devise" required><br><br>
-
-    <label for="langue">Langue:</label>
-    <input type="text" id="langue" name="langue" required><br><br>
-
-    <label for="annee_exercice">Année de l'exercice:</label>
-    <input type="text" id="annee_exercice" name="annee_exercice" required><br><br>
-
-    <label for="mois_debut_simulation">Mois de début de simulation:</label>
-    <input type="text" id="mois_debut_simulation" name="mois_debut_simulation" required><br><br>
-
-    <input type="submit" value="Sauvegarder">
+    <div class="form-group">
+        <label for="id_entreprise" class="tooltip">ID de l'entreprise:
+            <span class="tooltiptext">Identifiant unique de l'entreprise</span>
+        </label>
+        <input type="text" id="id_entreprise" name="id_entreprise" class="autocomplete" required><br><br>
+    </div>
+ 
+    <div class="form-group">
+        <label for="nom_entreprise" class="tooltip">Nom de l'entreprise:
+            <span class="tooltiptext">Nom officiel de l'entreprise</span>
+        </label>
+        <input type="text" id="nom_entreprise" name="nom_entreprise" class="autocomplete" required><br><br>
+    </div>  
+ 
+    <div class="form-group">    
+        <label for="devise" class="tooltip">Devise:
+            <span class="tooltiptext">Devise utilisée pour les transactions</span>
+        </label>
+        <!-- <input type="text" id="devise" name="devise" required><br><br> -->
+        <select id="devise" name="devise">
+            {% for item in devises %}
+                <option value="{{ item[0] }}">{{ item[0] }} - {{ item[1] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+ 
+    <div class="form-group">
+        <label for="langue" class="tooltip">Langue:
+            <span class="tooltiptext">Langue préférée pour l'interface</span>
+        </label>
+        <!-- <input type="text" id="langue" name="langue" required><br><br> -->
+        <select id="langue" name="langue">
+            {% for item in langues %}
+                <option value="{{ item[0] }}">{{ item[0] }} - {{ item[1] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+ 
+    <div class="form-group">
+        <label for="annee_exercice" class="tooltip">Année de l'exercice:
+            <span class="tooltiptext">Année fiscale de l'entreprise</span>
+        </label>
+        <input type="text" id="annee_exercice" name="annee_exercice" required><br><br>
+    </div>
+ 
+    <div class="form-group">
+        <label for="mois_debut_simulation" class="tooltip">Mois de début de simulation:
+            <span class="tooltiptext">Premier mois de la simulation</span>
+        </label>
+        <input type="text" id="mois_debut_simulation" name="mois_debut_simulation" required><br><br>
+    </div>
+ 
+    <div class="form-group">
+        <button type="submit" value="Sauvegarder">Sauvegarder</button>
+    </div>
 </form>
-<br>
-<div>
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul>
-                {% for message in messages %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
+ 
+<!-- Icône pour afficher/cacher le tableau -->
+<div class="toggle-icon" id="toggleIcon">👁️ Voir les données</div>
+ 
+<div class="winked-zamble">
+<!-- Tableau pour afficher les données enregistrées -->
+<table id="dataTable" class="hidden">
+    <thead>
+        <tr>
+            <th>ID de l'entreprise</th>
+            <th>Nom de l'entreprise</th>
+            <th>Devise</th>
+            <th>Langue</th>
+            <th>Année de l'exercice</th>
+            <th>Mois de début de simulation</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Les lignes de données seront insérées ici -->
+        {% for row in data %}
+        <tr>
+           
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td>{{ row[3] }}</td>
+            <td>{{ row[4] }}</td>
+            <td>{{ row[5] }}</td>
+            <td>{{ row[6] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 </div>
+</div>
+<script>
+        // Afficher/cacher le tableau lors du clic sur l'icône
+        document.getElementById('toggleIcon').addEventListener('click', function() {
+            const dataTable = document.getElementById('dataTable');
+            if (dataTable.classList.contains('hidden')) {
+                dataTable.classList.remove('hidden');
+                this.textContent = '👁️ Cacher les données';
+            } else {
+                dataTable.classList.add('hidden');
+                this.textContent = '👁️ Voir les données';
+            }
+        });
+</script>
 {% endblock %}
