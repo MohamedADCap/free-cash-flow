@@ -50,7 +50,7 @@ def init_sqlite():
 
 
     cursor.execute('''
-        CREATE TABLE parametres_simulation (
+        CREATE TABLE IF NOT EXISTS parametres_simulation (
         entreprise TEXT NOT NULL,
         version TEXT NOT NULL,
         mois_simulation_FRF TEXT NOT NULL,
@@ -74,7 +74,7 @@ def init_sqlite():
     ''')
 
     cursor.execute('''
-        CREATE TABLE courbes (
+        CREATE TABLE IF NOT EXISTS courbes (
         entreprise TEXT NOT NULL,
         version TEXT NOT NULL,
         mois_simulation_FRF TEXT NOT NULL,
