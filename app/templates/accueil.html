@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Cash Flow Calculator</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="title">Free Cash Flow Calculator<br><img src="https://e7.pngegg.com/pngimages/325/438/png-clipart-car-michelin-man-tire-logo-car-blue-text.png" alt="Logo MICHELIN" width=10% height=10%/></div>
+        
+        <div class="row">
+            <div class="column column-details">
+                <div class="details">Les paramètres généraux de l'entreprise</div>
+            </div>
+            <div class="column column-button">
+                <!-- Bouton pour les paramètres généraux -->
+                <a href="{{ url_for('main.saisie_parametres_generaux') }}" class="button">1. Je saisis les paramètres généraux</a>
+            </div>
+        </div>    
+        <div class="arrow">↓</div>
+
+        <div class="row">
+            <div class="column column-details">
+                <div class="details">Les catégories et les natures de mouvements pour ce POC</div>
+            </div>
+            <div class="column column-button">
+                <!-- Bouton pour charger les natures de mouvements -->
+                <a href="{{ url_for('main.parametre_nature_mvm_upload') }}" class="button">2. Je charge les natures de mouvements</a>
+            </div> 
+        </div>
+        <div class="arrow">↓</div>
+
+        <div class="row">
+            <div class="column column-details">
+                <div class="details">Les soldes intermédiaires de gestion</div>
+            </div>
+            <div class="column column-button">
+                <!-- Bouton pour charger les mouvements -->
+                <a href="{{ url_for('main.saisie_mouvements') }}" class="button">3. Je charge les mouvements</a>
+            </div>
+        </div>
+        <div class="arrow">↓</div>
+
+        <div class="row">
+            <div class="column column-details">
+                <div class="details">Initialiser les informations de simulation</div>
+            </div>
+            <div class="column column-button">
+                <!-- Bouton pour les simulations -->
+                <a href="{{ url_for('main.saisie_options_simulation') }}" class="button">4. Je choisis les options de simulation</a>
+            </div>
+        </div>
+        <div class="arrow">↓</div>
+
+        <div class="row">
+            <div class="column column-details">
+                <div class="details">La saisie des caractéristiques de la courbe d’évolution</div>
+            </div>
+            <div class="column column-button">
+                <!-- Bouton pour les courbes -->
+                <a href="{{ url_for('main.courbes') }}" class="button">5. Courbes d'évolutions prévisionnelles</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
