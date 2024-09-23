@@ -1,8 +1,51 @@
 /* Add your CSS styles here */
+ul li.flash-success {
+    color: green;
+    font-weight: bold;
+}
+ul li.flash-error {
+    color: red;
+    font-weight: bold;
+}
 body {
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #f0f0f0;
+        }
+        .winked-zamble {
+            overflow:auto;
+            width: auto;
+            height: 238px;
+        }
+        table {
+           
+            border-collapse: collapse;
+            margin-top: 20px;
+            /* overflow:auto; */
+           
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            position: sticky;
+            top: 0;
+            color: #0060AE;
+            background-color: #FFE600;
+        }
+        .hidden {
+            display: none;
+        }
+        .toggle-icon {
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 20px;
+            text-align: center;
+            padding-left: 78%;
         }
 .step {
             background-color: #0066cc;
@@ -13,13 +56,61 @@ body {
             border-radius: 5px;
             font-size: 18px;
         }
+        form {
+            margin-bottom: 20px;
+            padding-left: 28%;
+        }
+        .form-container {
+            /* width: 500px; */
+            margin: 0 auto;
+            /* padding-left: 23%; */
+        }
+        .form-group {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            flex-basis: 204px;
+            text-align: left;
+            margin-right: 10px;
+        }
+        .form-group input {
+            /*flex-basis: 55%;*/
+            padding: 5px;
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; /* Positionne la bulle au-dessus de l'élément */
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
 body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
         }
-        
+       
 .container {
             width: 100%;
             max-width: 900px;
@@ -27,13 +118,13 @@ body {
             padding: 20px;
             text-align: center;
         }
-        
+       
 .title {
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 20px;
         }
-        
+       
 a.button {
             display: inline-block;
             background-color: #0060AE;
@@ -46,12 +137,12 @@ a.button {
             font-size: 18px;
             border-radius: 5px;
         }
-        
+       
 a.button:hover {
             /* background-color: #005bb5; */
             background-color: #FFE600;
         }
-        
+       
 .details {
             background-color: #eeeeee;
             padding: 15px;
@@ -59,62 +150,59 @@ a.button:hover {
             border-radius: 5px;
             font-style: italic;
         }
-        
+       
 .arrow {
             font-size: 30px;
             color: #0066cc;
             padding-left: 38%;
         }
-        
+       
 .row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
         }
-        
+       
 .column {
             flex: 0 0 45%; /* Chaque colonne prendra 45% de l'espace */
         }
-        
+       
 .column-button {
             text-align: left; /* Alignement du bouton à gauche */
         }
        
 /* .column-details {
-            text-align: right; /* Alignement des détails à droite */
-        } */
+            text-align: right; /* Alignement des détails à droite
+        } 
+*/
 h1 {
     color: #333;
 }
-
-form {
-    margin-bottom: 20px;
-}
-
+ 
 input[type="file"] {
     margin-top: 10px;
 }
-
+ 
 button {
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #0060AE;
     color: #fff;
     border: none;
     border-radius: 3px;
     cursor: pointer;
 }
-
+ 
 button:hover {
-    background-color: #0056b3;
+    background-color: #FFE600;
 }
-
+ 
 ul {
     list-style: none;
     padding: 0;
 }
-
+ 
 ul li {
     margin-bottom: 5px;
-    color: #ff0000;
+    /*color: #ff0000;*/
 }

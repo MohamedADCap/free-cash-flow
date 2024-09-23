@@ -50,7 +50,7 @@ def init_sqlite():
 
 
     cursor.execute('''
-        CREATE TABLE parametres_simulation (
+        CREATE TABLE IF NOT EXISTS parametres_simulation (
         entreprise TEXT NOT NULL,
         version TEXT NOT NULL,
         mois_simulation_FRF TEXT NOT NULL,
@@ -74,7 +74,7 @@ def init_sqlite():
     ''')
 
     cursor.execute('''
-        CREATE TABLE courbes (
+        CREATE TABLE IF NOT EXISTS courbes (
         entreprise TEXT NOT NULL,
         version TEXT NOT NULL,
         mois_simulation_FRF TEXT NOT NULL,
@@ -89,6 +89,38 @@ def init_sqlite():
         taux_autre_charges TEXT,
         PRIMARY KEY (entreprise, version, mois_simulation_FRF, mois_prevision)
         )
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS devises (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        shortcut TEXT NOT NULL,
+        name TEXT NOT NULL
+        )
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS langues (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        shortcut TEXT NOT NULL,
+        name TEXT NOT NULL
+        )
+    ''')
+
+    cursor.execute('''
+        INSERT INTO devises (shortcut, name) VALUES
+        ('EUR', 'Euro'),
+        ('USD', 'Dollar Américain'),
+        ('GBP', 'Livre Sterling'),
+        ('CAD', 'Dollar Canadien'),
+        ('CHF', 'Franc Suisse')
+    ''')
+
+    cursor.execute('''                   
+        INSERT INTO langues (shortcut, name) VALUES
+        ('FR', 'Français'),
+        ('EN', 'Anglais'),
+        ('ES', 'Espagnol')
     ''')
 
     conn.commit()
